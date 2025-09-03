@@ -51,6 +51,7 @@
 #include "io/beeper.h"
 #include "io/serial.h"
 #include "io/ledstrip.h"
+#include "config/simplified_tuning.h"
 #include "pg/rx.h"
 #include "pg/motor.h"
 #include "rx/rx.h"
@@ -92,6 +93,19 @@ void targetConfiguration(void)
     modeActivationConditionsMutable(1)->range.startStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MIN);
     modeActivationConditionsMutable(1)->range.endStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MAX);
     analyzeModeActivationConditions();
+
+    // PID Profile Configuration - Simple PID defaults
+    pidProfile_t *pidProfile = pidProfilesMutable(0);
+    pidProfile->simplified_pids_mode = PID_SIMPLIFIED_TUNING_RP;
+    pidProfile->simplified_master_multiplier = 175;
+    pidProfile->simplified_i_gain = 35;
+    pidProfile->simplified_pi_gain = 200;
+    pidProfile->simplified_dmin_ratio = 140;
+    pidProfile->simplified_feedforward_gain = 55;
+
+    // Set throttle curve for 50% stick = 38% output (hover throttle)
+    controlRateConfig_t *controlRateConfig = controlRateProfilesMutable(0);
+    controlRateConfig->thrMid8 = 38; // 38% output at 50% stick for hover
 
     // LED Strip configuration
     // Set race profile color to red
