@@ -184,6 +184,9 @@ void targetConfiguration(void)
     // Disable airmode feature by default
     featureConfigClear(FEATURE_AIRMODE);
 
+    // Set PID rate to 4kHz (assuming 8kHz gyro rate, pid_process_denom = 2)
+    pidConfigMutable()->pid_process_denom = 2;
+
     // LED Strip configuration
     // Set LED profile default to STATUS mode instead of race/beacon
     ledStripConfigMutable()->ledstrip_profile = LED_PROFILE_STATUS;
