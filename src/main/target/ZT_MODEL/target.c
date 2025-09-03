@@ -26,6 +26,42 @@
 #include "drivers/timer.h"
 #include "drivers/timer_def.h"
 
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "platform.h"
+
+#ifdef USE_TARGET_CONFIG
+
+#include "blackbox/blackbox.h"
+#include "fc/rc_modes.h"
+#include "common/axis.h"
+#include "common/filter.h"
+#include "config/feature.h"
+#include "drivers/pwm_esc_detect.h"
+#include "config/config.h"
+#include "fc/controlrate_profile.h"
+#include "fc/rc_controls.h"
+#include "fc/rc_modes.h"
+#include "flight/imu.h"
+#include "flight/mixer.h"
+#include "flight/pid.h"
+#include "io/beeper.h"
+#include "io/serial.h"
+#include "pg/rx.h"
+#include "pg/motor.h"
+#include "rx/rx.h"
+#include "sensors/barometer.h"
+#include "sensors/boardalignment.h"
+#include "sensors/compass.h"
+#include "sensors/gyro.h"
+
+#ifdef BRUSHED_MOTORS_PWM_RATE
+#undef BRUSHED_MOTORS_PWM_RATE
+#endif
+
+#define BRUSHED_MOTORS_PWM_RATE 10000
+
 const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
     DEF_TIM(TMR1, CH1, PA8, TIM_USE_ANY | TIM_USE_LED, 0, 7, 1),             // PWM1 - OUT1  LEDSTRIP /MCO1
 
@@ -34,3 +70,12 @@ const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
     DEF_TIM(TMR3, CH3, PB0,  TIM_USE_MOTOR, 0, 2, 2), // motor3 DMA1 CH3
     DEF_TIM(TMR3, CH4, PB1,  TIM_USE_MOTOR, 0, 3, 3), // motor4 DMA1 CH4
 };
+
+void targetConfiguration(void)
+{
+if (getDetectedMotorType() == MOTOR_BRUSHED) {
+        motorConfigMutable()->dev.motorPwmRate = BRUSHED_MOTORS_PWM_RATE;
+        motorConfigMutable()->minthrottle = 1040; // for 6mm and 7mm brushed
+    }
+}
+#endif

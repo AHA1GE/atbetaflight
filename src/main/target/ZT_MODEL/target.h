@@ -22,6 +22,7 @@
 
 #define TARGET_BOARD_IDENTIFIER "ZT"
 #define USBD_PRODUCT_STRING     "ZT_MODEL"
+#define USE_TARGET_CONFIG
 /**********swd debuger reserved *****************
  *
  * pa13	swdio
@@ -40,6 +41,8 @@
  */
 
 //No Buttons
+
+#define BRUSHED_MOTORS
 
 //LEDS
 #define LED0_PIN        PC13
@@ -146,7 +149,7 @@
 #define UART1_TX_PIN            PA9
 
 #define USE_UART2
-#define UART2_RX_PIN            PB0 //PA3 CHANGE TO PB0
+#define UART2_RX_PIN            PA3
 #define UART2_TX_PIN            PA2
 
 #define USE_UART3
