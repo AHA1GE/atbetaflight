@@ -181,6 +181,9 @@ void targetConfiguration(void)
     controlRateConfig_t *controlRateConfig = controlRateProfilesMutable(0);
     controlRateConfig->thrMid8 = 38; // 38% output at 50% stick for hover
 
+    // Disable airmode feature by default
+    featureConfigClear(FEATURE_AIRMODE);
+
     // LED Strip configuration
     // Set LED profile default to STATUS mode instead of race/beacon
     ledStripConfigMutable()->ledstrip_profile = LED_PROFILE_STATUS;
