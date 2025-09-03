@@ -35,6 +35,8 @@
 
 #include "blackbox/blackbox.h"
 #include "fc/rc_modes.h"
+#include "fc/rc_controls.h"
+#include "fc/rc_adjustments.h"
 #include "common/axis.h"
 #include "common/filter.h"
 #include "config/feature.h"
@@ -48,6 +50,7 @@
 #include "flight/pid.h"
 #include "io/beeper.h"
 #include "io/serial.h"
+#include "io/ledstrip.h"
 #include "pg/rx.h"
 #include "pg/motor.h"
 #include "rx/rx.h"
@@ -73,9 +76,72 @@ const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
 
 void targetConfiguration(void)
 {
-if (getDetectedMotorType() == MOTOR_BRUSHED) {
+    if (getDetectedMotorType() == MOTOR_BRUSHED) {
         motorConfigMutable()->dev.motorPwmRate = BRUSHED_MOTORS_PWM_RATE;
         motorConfigMutable()->minthrottle = 1040; // for 6mm and 7mm brushed
     }
+
+    // Set AUX1 low = ARM as default
+    modeActivationConditionsMutable(0)->modeId = BOXARM;
+    modeActivationConditionsMutable(0)->auxChannelIndex = AUX1 - NON_AUX_CHANNEL_COUNT;
+    modeActivationConditionsMutable(0)->range.startStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MIN);
+    modeActivationConditionsMutable(0)->range.endStep = CHANNEL_VALUE_TO_STEP(1300);
+    // Set AUX1 full range = Angle as default
+    modeActivationConditionsMutable(1)->modeId = BOXANGLE;
+    modeActivationConditionsMutable(1)->auxChannelIndex = AUX1 - NON_AUX_CHANNEL_COUNT;
+    modeActivationConditionsMutable(1)->range.startStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MIN);
+    modeActivationConditionsMutable(1)->range.endStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MAX);
+    analyzeModeActivationConditions();
+
+    // LED Strip configuration
+    // Set race profile color to red
+    ledStripConfigMutable()->ledstrip_race_color = COLOR_RED;
+    
+    // Set beacon profile to show static blue
+    ledStripConfigMutable()->ledstrip_beacon_color = COLOR_BLUE;
+    ledStripConfigMutable()->ledstrip_beacon_period_ms = 500;  // 500 ms period, useless here
+    ledStripConfigMutable()->ledstrip_beacon_percent = 100;     // 100% duty cycle = static
+    ledStripConfigMutable()->ledstrip_beacon_armed_only = 0; // show always
+
+#ifdef USE_LED_STRIP_STATUS_MODE
+    // LED Status mode configuration - 8 LEDs setup
+    // led 0 0,15::CI:10 - Corner Indicator at position (0,15) color 10
+    ledStripStatusModeConfigMutable()->ledConfigs[0] = DEFINE_LED(0, 15, 10, 0, LF(COLOR), LO(INDICATOR), 0);
+    
+    // led 1 15,15::CI:10 - Corner Indicator at position (15,15) color 10  
+    ledStripStatusModeConfigMutable()->ledConfigs[1] = DEFINE_LED(15, 15, 10, 0, LF(COLOR), LO(INDICATOR), 0);
+    
+    // led 2 15,0::CI:6 - Corner Indicator at position (15,0) color 6
+    ledStripStatusModeConfigMutable()->ledConfigs[2] = DEFINE_LED(15, 0, 6, 0, LF(COLOR), LO(INDICATOR), 0);
+    
+    // led 3 0,0::CI:6 - Corner Indicator at position (0,0) color 6
+    ledStripStatusModeConfigMutable()->ledConfigs[3] = DEFINE_LED(0, 0, 6, 0, LF(COLOR), LO(INDICATOR), 0);
+    
+    // led 4 8,15::CYO:9 - Color Yellow Orange overlay at position (8,15) color 9
+    ledStripStatusModeConfigMutable()->ledConfigs[4] = DEFINE_LED(8, 15, COLOR_YELLOW, 0, LF(COLOR), LO(WARNING), 0);
+    
+    // led 5 8,14::CYO:6 - Color Yellow Orange overlay at position (8,14) color 6
+    ledStripStatusModeConfigMutable()->ledConfigs[5] = DEFINE_LED(8, 14, COLOR_YELLOW, 0, LF(COLOR), LO(WARNING), 0);
+    
+    // led 6 8,13::CYO:4 - Color Yellow Orange overlay at position (8,13) color 4
+    ledStripStatusModeConfigMutable()->ledConfigs[6] = DEFINE_LED(8, 13, COLOR_YELLOW, 0, LF(COLOR), LO(WARNING), 0);
+    
+    // led 7 8,12::CYOW:2 - Color Yellow Orange Warning at position (8,12) color 2
+    ledStripStatusModeConfigMutable()->ledConfigs[7] = DEFINE_LED(8, 12, COLOR_YELLOW, 0, LF(COLOR), LO(WARNING), 0);
+
+    // Re-evaluate LED configuration after changes
+    reevaluateLedConfig();
+#endif
+
+    // AUX4 (index 3) to switch LED profiles - adjrange 0 0 0 900 2100 12 0 0 0
+    adjustmentRange_t *adjRange = adjustmentRangesMutable(0);
+    adjRange->auxChannelIndex = 0; // range channel (not used here)
+    adjRange->range.startStep = CHANNEL_VALUE_TO_STEP(900);
+    adjRange->range.endStep = CHANNEL_VALUE_TO_STEP(2100);
+    adjRange->adjustmentConfig = 30; // LED profile adjustment function index (ADJUSTMENT_LED_PROFILE + offset)
+    adjRange->auxSwitchChannelIndex = AUX4 - NON_AUX_CHANNEL_COUNT; // AUX4 = 3 in array (0-based)
+    adjRange->adjustmentCenter = 0;
+    adjRange->adjustmentScale = 0;
+
 }
 #endif
