@@ -177,15 +177,21 @@ void targetConfiguration(void)
     pidProfile->feedforward_averaging = FEEDFORWARD_AVERAGING_2_POINT;
 #endif
 
-    // Set throttle curve for 50% stick = 38% output (hover throttle)
+    // Set throttle curve for 50% stick = 49% output (hover throttle is 38)
     controlRateConfig_t *controlRateConfig = controlRateProfilesMutable(0);
-    controlRateConfig->thrMid8 = 38; // 38% output at 50% stick for hover
+    controlRateConfig->thrMid8 = 49; // 49% output at 50% stick for hover
 
     // Disable airmode feature by default
     featureConfigClear(FEATURE_AIRMODE);
 
-    // Set PID rate to 4kHz (assuming 8kHz gyro rate, pid_process_denom = 2)
-    pidConfigMutable()->pid_process_denom = 2;
+    // Set runaway takeoff prevention deactivate throttle to 12%
+    pidConfigMutable()->runaway_takeoff_deactivate_throttle = 12;
+    
+    // Set runaway takeoff prevention deactivate delay to 200ms instead of 500ms
+    pidConfigMutable()->runaway_takeoff_deactivate_delay = 200;
+
+    // // Set PID rate to 4kHz (assuming 8kHz gyro rate, pid_process_denom = 2)
+    // pidConfigMutable()->pid_process_denom = 2;
 
     // LED Strip configuration
     // Set LED profile default to STATUS mode instead of race/beacon
