@@ -186,9 +186,9 @@ void targetConfiguration(void)
 
     // Set runaway takeoff prevention deactivate throttle to 12%
     pidConfigMutable()->runaway_takeoff_deactivate_throttle = 12;
-    
-    // Set runaway takeoff prevention deactivate delay to 200ms instead of 500ms
-    pidConfigMutable()->runaway_takeoff_deactivate_delay = 200;
+
+    // Set runaway takeoff prevention deactivate delay to 100ms instead of 500ms
+    pidConfigMutable()->runaway_takeoff_deactivate_delay = 100;
 
     // // Set PID rate to 4kHz (assuming 8kHz gyro rate, pid_process_denom = 2)
     // pidConfigMutable()->pid_process_denom = 2;
