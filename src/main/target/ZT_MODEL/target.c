@@ -100,11 +100,18 @@ void targetConfiguration(void)
     analyzeModeActivationConditions();
 
     // Master Configuration from preset
-//     // Set accelerometer calibration values: acc_calibration = -3,52,-8,1
+    // Gyro filter settings from preset
+    gyroConfigMutable()->gyro_lpf1_static_hz = 212;  // gyro_lpf1_static_hz
+    gyroConfigMutable()->gyro_lpf2_static_hz = 425;  // gyro_lpf2_static_hz
+    gyroConfigMutable()->gyro_lpf1_dyn_min_hz = 212; // gyro_lpf1_dyn_min_hz
+    gyroConfigMutable()->gyro_lpf1_dyn_max_hz = 425; // gyro_lpf1_dyn_max_hz
+    gyroConfigMutable()->simplified_gyro_filter_multiplier = 85; // simplified_gyro_filter_multiplier
+    
+    // Set accelerometer calibration values: acc_calibration = 0,0,0,1
 // #ifdef USE_ACC
-//     accelerometerConfigMutable()->accZero.raw[X] = -3;
-//     accelerometerConfigMutable()->accZero.raw[Y] = 52;
-//     accelerometerConfigMutable()->accZero.raw[Z] = -8;
+//     accelerometerConfigMutable()->accZero.raw[X] = 0;
+//     accelerometerConfigMutable()->accZero.raw[Y] = 0;
+//     accelerometerConfigMutable()->accZero.raw[Z] = 0;
 //     accelerometerConfigMutable()->accZero.values.calibrationCompleted = 1;
 // #endif
 
@@ -123,36 +130,46 @@ void targetConfiguration(void)
 
     // PID Profile Configuration from preset - Profile 0
     pidProfile_t *pidProfile = pidProfilesMutable(0);
+    
+    // Dterm filter settings from preset
+    pidProfile->dterm_lpf1_dyn_min_hz = 71;   // dterm_lpf1_dyn_min_hz
+    pidProfile->dterm_lpf1_dyn_max_hz = 142;  // dterm_lpf1_dyn_max_hz
+    pidProfile->dterm_lpf1_static_hz = 71;    // dterm_lpf1_static_hz
+    pidProfile->dterm_lpf2_static_hz = 142;   // dterm_lpf2_static_hz
+    
+    // Anti-gravity settings from preset
+    pidProfile->itermAcceleratorGain = 8000;     // anti_gravity_gain
+    
     pidProfile->simplified_pids_mode = PID_SIMPLIFIED_TUNING_RP;
-    pidProfile->simplified_master_multiplier = 175;
+    pidProfile->simplified_master_multiplier = 150; // simplified_pi_gain from preset
     pidProfile->simplified_i_gain = 35;
-    pidProfile->simplified_pi_gain = 200;
-    pidProfile->simplified_dmin_ratio = 140;
-    pidProfile->simplified_feedforward_gain = 55;
+    pidProfile->simplified_pi_gain = 150; // from preset
+    pidProfile->simplified_dmin_ratio = 95; // simplified_dterm_filter_multiplier from preset
+    pidProfile->simplified_feedforward_gain = 45; // from preset
 
     // Iterm relax settings
     pidProfile->iterm_relax_type = ITERM_RELAX_GYRO;
     pidProfile->iterm_relax_cutoff = 10;
 
     // PID values from preset
-    pidProfile->pid[PID_PITCH].P = 164;
-    pidProfile->pid[PID_PITCH].I = 102;
-    pidProfile->pid[PID_PITCH].D = 88;
-    pidProfile->pid[PID_PITCH].F = 120;
+    pidProfile->pid[PID_PITCH].P = 123; // p_pitch from preset
+    pidProfile->pid[PID_PITCH].I = 77;  // i_pitch from preset
+    pidProfile->pid[PID_PITCH].D = 88;  // calculated based on dterm settings
+    pidProfile->pid[PID_PITCH].F = 98;  // f_pitch from preset
 
-    pidProfile->pid[PID_ROLL].P = 157;
-    pidProfile->pid[PID_ROLL].I = 98;
-    pidProfile->pid[PID_ROLL].D = 77;
-    pidProfile->pid[PID_ROLL].F = 115;
+    pidProfile->pid[PID_ROLL].P = 118;  // p_roll from preset
+    pidProfile->pid[PID_ROLL].I = 73;   // i_roll from preset
+    pidProfile->pid[PID_ROLL].D = 77;   // calculated based on dterm settings
+    pidProfile->pid[PID_ROLL].F = 94;   // f_roll from preset
 
-    pidProfile->pid[PID_YAW].P = 157;
-    pidProfile->pid[PID_YAW].I = 98;
-    pidProfile->pid[PID_YAW].D = 0; // YAW D is typically 0
-    pidProfile->pid[PID_YAW].F = 115;
+    pidProfile->pid[PID_YAW].P = 120;   // p_yaw from preset
+    pidProfile->pid[PID_YAW].I = 90;    // i_yaw from preset
+    pidProfile->pid[PID_YAW].D = 0;     // YAW D is typically 0
+    pidProfile->pid[PID_YAW].F = 100;   // f_yaw from preset
 
-    // Level mode settings
-    pidProfile->pid[PID_LEVEL].P = 80; // angle_level_strength
-    pidProfile->levelAngleLimit = 40;  // level_limit
+    // Level mode settings from preset
+    pidProfile->pid[PID_LEVEL].P = 60; // angle_level_strength from preset
+    pidProfile->levelAngleLimit = 35;  // level_limit from preset
 
 #ifdef USE_D_MIN
     // D_min values
@@ -168,8 +185,8 @@ void targetConfiguration(void)
 #endif
 
 #ifdef USE_THRUST_LINEARIZATION
-    // Thrust linearization
-    pidProfile->thrustLinearization = 25;
+    // Thrust linearization from preset
+    pidProfile->thrustLinearization = 30; // thrust_linear from preset
 #endif
 
 #ifdef USE_FEEDFORWARD
@@ -179,7 +196,18 @@ void targetConfiguration(void)
 
     // Set throttle curve for 50% stick = 49% output (hover throttle is 38)
     controlRateConfig_t *controlRateConfig = controlRateProfilesMutable(0);
+    
+    // Rate settings from preset (rateprofile 0)
+    controlRateConfig->rcRates[FD_ROLL] = 4;   // roll_rc_rate
+    controlRateConfig->rcRates[FD_PITCH] = 4;  // pitch_rc_rate  
+    controlRateConfig->rcRates[FD_YAW] = 4;    // yaw_rc_rate
+    controlRateConfig->rates[FD_ROLL] = 65;    // roll_srate
+    controlRateConfig->rates[FD_PITCH] = 66;   // pitch_srate
+    
+    // Throttle settings from preset
     controlRateConfig->thrMid8 = 49; // 49% output at 50% stick for hover
+    controlRateConfig->throttle_limit_type = THROTTLE_LIMIT_TYPE_SCALE; // throttle_limit_type = SCALE
+    controlRateConfig->throttle_limit_percent = 95; // throttle_limit_percent = 95
 
     // Disable airmode feature by default
     featureConfigClear(FEATURE_AIRMODE);
