@@ -244,14 +244,14 @@ void targetConfiguration(void)
     ledStripStatusModeConfigMutable()->ledConfigs[2] = DEFINE_LED(15, 0, 0, 0, LED_FUNCTION_BATTERY, 0, 0);
 
     // Back LEDs (0,15 and 15,15) - Blue color indicators
-    ledStripStatusModeConfigMutable()->ledConfigs[0] = DEFINE_LED(0, 15, COLOR_LIGHT_BLUE, 0, LED_FUNCTION_COLOR, 0, 0);
-    ledStripStatusModeConfigMutable()->ledConfigs[1] = DEFINE_LED(15, 15, COLOR_LIGHT_BLUE, 0, LED_FUNCTION_COLOR, 0, 0);
+    ledStripStatusModeConfigMutable()->ledConfigs[0] = DEFINE_LED(0, 15, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
+    ledStripStatusModeConfigMutable()->ledConfigs[1] = DEFINE_LED(15, 15, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
 
     // LED strip - Blue color (center positions)
-    ledStripStatusModeConfigMutable()->ledConfigs[4] = DEFINE_LED(8, 15, COLOR_LIGHT_BLUE, 0, LED_FUNCTION_COLOR, 0, 0);
-    ledStripStatusModeConfigMutable()->ledConfigs[5] = DEFINE_LED(8, 14, COLOR_LIGHT_BLUE, 0, LED_FUNCTION_COLOR, 0, 0);
-    ledStripStatusModeConfigMutable()->ledConfigs[6] = DEFINE_LED(8, 13, COLOR_LIGHT_BLUE, 0, LED_FUNCTION_COLOR, 0, 0);
-    ledStripStatusModeConfigMutable()->ledConfigs[7] = DEFINE_LED(8, 12, COLOR_LIGHT_BLUE, 0, LED_FUNCTION_COLOR, 0, 0);
+    ledStripStatusModeConfigMutable()->ledConfigs[4] = DEFINE_LED(8, 15, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
+    ledStripStatusModeConfigMutable()->ledConfigs[5] = DEFINE_LED(8, 14, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
+    ledStripStatusModeConfigMutable()->ledConfigs[6] = DEFINE_LED(8, 13, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
+    ledStripStatusModeConfigMutable()->ledConfigs[7] = DEFINE_LED(8, 12, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
 
     // Re-evaluate LED configuration after changes
     reevaluateLedConfig();
