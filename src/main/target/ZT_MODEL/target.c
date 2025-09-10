@@ -258,13 +258,13 @@ void targetConfiguration(void)
 #endif
 
     // // AUX4 (index 3) adjustment range from preset: adjrange 0 0 0 900 1300 30 3 0 0
-    // adjustmentRange_t *adjRange = adjustmentRangesMutable(0);
-    // adjRange->auxChannelIndex = 0; // range channel (not used here)
-    // adjRange->range.startStep = CHANNEL_VALUE_TO_STEP(900);
-    // adjRange->range.endStep = CHANNEL_VALUE_TO_STEP(2100);          // Updated to match preset
-    // adjRange->adjustmentConfig = 30;                                // LED profile adjustment function index (ADJUSTMENT_LED_PROFILE + offset)
-    // adjRange->auxSwitchChannelIndex = AUX4 - NON_AUX_CHANNEL_COUNT; // AUX4 = 3 in array (0-based)
-    // adjRange->adjustmentCenter = 0;
-    // adjRange->adjustmentScale = 0;
+    adjustmentRange_t *adjRange = adjustmentRangesMutable(0);
+    adjRange->auxChannelIndex = 1; // range channel (not used here)
+    adjRange->range.startStep = CHANNEL_VALUE_TO_STEP(900);
+    adjRange->range.endStep = CHANNEL_VALUE_TO_STEP(910);          // Updated to match preset
+    adjRange->adjustmentConfig = 30;                                // LED profile adjustment function index (ADJUSTMENT_LED_PROFILE + offset)
+    adjRange->auxSwitchChannelIndex = AUX4 - NON_AUX_CHANNEL_COUNT; // AUX4 = 3 in array (0-based)
+    adjRange->adjustmentCenter = 0;
+    adjRange->adjustmentScale = 0;
 }
 #endif
