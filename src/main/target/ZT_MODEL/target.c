@@ -101,28 +101,23 @@ void targetConfiguration(void)
 
     // Master Configuration from preset
     // Gyro filter settings from preset
-    gyroConfigMutable()->gyro_lpf1_static_hz = 212;  // gyro_lpf1_static_hz
-    gyroConfigMutable()->gyro_lpf2_static_hz = 425;  // gyro_lpf2_static_hz
-    gyroConfigMutable()->gyro_lpf1_dyn_min_hz = 212; // gyro_lpf1_dyn_min_hz
-    gyroConfigMutable()->gyro_lpf1_dyn_max_hz = 425; // gyro_lpf1_dyn_max_hz
+    gyroConfigMutable()->gyro_lpf1_static_hz = 212;              // gyro_lpf1_static_hz
+    gyroConfigMutable()->gyro_lpf2_static_hz = 425;              // gyro_lpf2_static_hz
+    gyroConfigMutable()->gyro_lpf1_dyn_min_hz = 212;             // gyro_lpf1_dyn_min_hz
+    gyroConfigMutable()->gyro_lpf1_dyn_max_hz = 425;             // gyro_lpf1_dyn_max_hz
     gyroConfigMutable()->simplified_gyro_filter_multiplier = 85; // simplified_gyro_filter_multiplier
-    
+
     // Set accelerometer calibration values: acc_calibration = 0,0,0,1
-// #ifdef USE_ACC
-//     accelerometerConfigMutable()->accZero.raw[X] = 0;
-//     accelerometerConfigMutable()->accZero.raw[Y] = 0;
-//     accelerometerConfigMutable()->accZero.raw[Z] = 0;
-//     accelerometerConfigMutable()->accZero.values.calibrationCompleted = 1;
-// #endif
+    // #ifdef USE_ACC
+    //     accelerometerConfigMutable()->accZero.raw[X] = 0;
+    //     accelerometerConfigMutable()->accZero.raw[Y] = 0;
+    //     accelerometerConfigMutable()->accZero.raw[Z] = 0;
+    //     accelerometerConfigMutable()->accZero.values.calibrationCompleted = 1;
+    // #endif
 
     // Set mag_hardware = NONE (compass disabled)
 #ifdef USE_MAG
     compassConfigMutable()->mag_hardware = MAG_NONE;
-#endif
-
-    // Set blackbox_sample_rate = 1/16
-#ifdef USE_BLACKBOX
-    blackboxConfigMutable()->sample_rate = BLACKBOX_RATE_16TH;
 #endif
 
     // Set bat_capacity = 500
@@ -130,42 +125,42 @@ void targetConfiguration(void)
 
     // PID Profile Configuration from preset - Profile 0
     pidProfile_t *pidProfile = pidProfilesMutable(0);
-    
+
     // Dterm filter settings from preset
-    pidProfile->dterm_lpf1_dyn_min_hz = 71;   // dterm_lpf1_dyn_min_hz
-    pidProfile->dterm_lpf1_dyn_max_hz = 142;  // dterm_lpf1_dyn_max_hz
-    pidProfile->dterm_lpf1_static_hz = 71;    // dterm_lpf1_static_hz
-    pidProfile->dterm_lpf2_static_hz = 142;   // dterm_lpf2_static_hz
-    
+    pidProfile->dterm_lpf1_dyn_min_hz = 71;  // dterm_lpf1_dyn_min_hz
+    pidProfile->dterm_lpf1_dyn_max_hz = 142; // dterm_lpf1_dyn_max_hz
+    pidProfile->dterm_lpf1_static_hz = 71;   // dterm_lpf1_static_hz
+    pidProfile->dterm_lpf2_static_hz = 142;  // dterm_lpf2_static_hz
+
     // Anti-gravity settings from preset
-    pidProfile->itermAcceleratorGain = 8000;     // anti_gravity_gain
-    
-    pidProfile->simplified_pids_mode = PID_SIMPLIFIED_TUNING_RP;
-    pidProfile->simplified_master_multiplier = 150; // simplified_pi_gain from preset
-    pidProfile->simplified_i_gain = 35;
-    pidProfile->simplified_pi_gain = 150; // from preset
-    pidProfile->simplified_dmin_ratio = 95; // simplified_dterm_filter_multiplier from preset
-    pidProfile->simplified_feedforward_gain = 45; // from preset
+    pidProfile->itermAcceleratorGain = 8000; // anti_gravity_gain
+
+    pidProfile->simplified_pids_mode = PID_SIMPLIFIED_TUNING_OFF;
+    // pidProfile->simplified_master_multiplier = 150; // simplified_pi_gain from preset
+    // pidProfile->simplified_i_gain = 35;
+    // pidProfile->simplified_pi_gain = 150; // from preset
+    // pidProfile->simplified_dmin_ratio = 95; // simplified_dterm_filter_multiplier from preset
+    // pidProfile->simplified_feedforward_gain = 45; // from preset
 
     // Iterm relax settings
     pidProfile->iterm_relax_type = ITERM_RELAX_GYRO;
-    pidProfile->iterm_relax_cutoff = 10;
+    pidProfile->iterm_relax_cutoff = 7;
 
     // PID values from preset
-    pidProfile->pid[PID_PITCH].P = 123; // p_pitch from preset
-    pidProfile->pid[PID_PITCH].I = 77;  // i_pitch from preset
+    pidProfile->pid[PID_PITCH].P = 115; // p_pitch
+    pidProfile->pid[PID_PITCH].I = 90;  // i_pitch
     pidProfile->pid[PID_PITCH].D = 88;  // calculated based on dterm settings
-    pidProfile->pid[PID_PITCH].F = 98;  // f_pitch from preset
+    pidProfile->pid[PID_PITCH].F = 100; // f_pitch
 
-    pidProfile->pid[PID_ROLL].P = 118;  // p_roll from preset
-    pidProfile->pid[PID_ROLL].I = 73;   // i_roll from preset
-    pidProfile->pid[PID_ROLL].D = 77;   // calculated based on dterm settings
-    pidProfile->pid[PID_ROLL].F = 94;   // f_roll from preset
+    pidProfile->pid[PID_ROLL].P = 110; // p_roll
+    pidProfile->pid[PID_ROLL].I = 80;  // i_roll
+    pidProfile->pid[PID_ROLL].D = 77;  // calculated based on dterm settings
+    pidProfile->pid[PID_ROLL].F = 90;  // f_roll
 
-    pidProfile->pid[PID_YAW].P = 120;   // p_yaw from preset
-    pidProfile->pid[PID_YAW].I = 90;    // i_yaw from preset
-    pidProfile->pid[PID_YAW].D = 0;     // YAW D is typically 0
-    pidProfile->pid[PID_YAW].F = 100;   // f_yaw from preset
+    pidProfile->pid[PID_YAW].P = 110; // p_yaw
+    pidProfile->pid[PID_YAW].I = 80;  // i_yaw
+    pidProfile->pid[PID_YAW].D = 50;  // YAW D is typically 0
+    pidProfile->pid[PID_YAW].F = 90;  // f_yaw
 
     // Level mode settings from preset
     pidProfile->pid[PID_LEVEL].P = 60; // angle_level_strength from preset
@@ -173,9 +168,9 @@ void targetConfiguration(void)
 
 #ifdef USE_D_MIN
     // D_min values
-    pidProfile->d_min[FD_ROLL] = 52;
-    pidProfile->d_min[FD_PITCH] = 59;
-    pidProfile->d_min[FD_YAW] = 0;  // typically 0 for yaw
+    pidProfile->d_min[FD_ROLL] = 55;
+    pidProfile->d_min[FD_PITCH] = 60;
+    pidProfile->d_min[FD_YAW] = 30; // typically 0 for yaw
     pidProfile->d_min_advance = 25; // d_max_advance
 #endif
 
@@ -196,21 +191,18 @@ void targetConfiguration(void)
 
     // Set throttle curve for 50% stick = 49% output (hover throttle is 38)
     controlRateConfig_t *controlRateConfig = controlRateProfilesMutable(0);
-    
-    // Rate settings from preset (rateprofile 0)
-    controlRateConfig->rcRates[FD_ROLL] = 4;   // roll_rc_rate
-    controlRateConfig->rcRates[FD_PITCH] = 4;  // pitch_rc_rate  
-    controlRateConfig->rcRates[FD_YAW] = 4;    // yaw_rc_rate
-    controlRateConfig->rates[FD_ROLL] = 65;    // roll_srate
-    controlRateConfig->rates[FD_PITCH] = 66;   // pitch_srate
-    
-    // Throttle settings from preset
-    controlRateConfig->thrMid8 = 49; // 49% output at 50% stick for hover
-    controlRateConfig->throttle_limit_type = THROTTLE_LIMIT_TYPE_SCALE; // throttle_limit_type = SCALE
-    controlRateConfig->throttle_limit_percent = 95; // throttle_limit_percent = 95
 
-    // Disable airmode feature by default
-    featureConfigClear(FEATURE_AIRMODE);
+    // Rate settings from preset (rateprofile 0)
+    controlRateConfig->rcRates[FD_ROLL] = 4;  // roll_rc_rate
+    controlRateConfig->rcRates[FD_PITCH] = 4; // pitch_rc_rate
+    controlRateConfig->rcRates[FD_YAW] = 4;   // yaw_rc_rate
+    controlRateConfig->rates[FD_ROLL] = 65;   // roll_srate
+    controlRateConfig->rates[FD_PITCH] = 66;  // pitch_srate
+
+    // Throttle settings from preset
+    controlRateConfig->thrMid8 = 38;                                    // 38% output at 50% stick for hover
+    controlRateConfig->throttle_limit_type = THROTTLE_LIMIT_TYPE_SCALE; // throttle_limit_type = SCALE
+    controlRateConfig->throttle_limit_percent = 95;                     // throttle_limit_percent = 95
 
     // Set runaway takeoff prevention deactivate throttle to 12%
     pidConfigMutable()->runaway_takeoff_deactivate_throttle = 12;
@@ -220,6 +212,19 @@ void targetConfiguration(void)
 
     // // Set PID rate to 4kHz (assuming 8kHz gyro rate, pid_process_denom = 2)
     // pidConfigMutable()->pid_process_denom = 2;
+
+    // Disable airmode feature by default
+    featureConfigClear(FEATURE_AIRMODE);
+    // Disable inflight_acc_cal by default
+    featureConfigClear(FEATURE_INFLIGHT_ACC_CAL);
+    // Disable OSD by default
+    featureConfigClear(FEATURE_OSD);
+    // Disable blackbox by default by set blackbox device to NONE
+#ifdef USE_BLACKBOX
+    // Set blackbox_sample_rate = 1/16
+    blackboxConfigMutable()->sample_rate = BLACKBOX_RATE_16TH;
+    blackboxConfigMutable()->device = BLACKBOX_DEVICE_NONE;
+#endif
 
     // LED Strip configuration
     // Keep race and beacon colors but default to status
@@ -234,7 +239,7 @@ void targetConfiguration(void)
 
 #ifdef USE_LED_STRIP_STATUS_MODE
     // LED Status mode configuration - 8 LEDs setup
-    // Front LEDs (0,0 and 15,0) - Battery indicators 
+    // Front LEDs (0,0 and 15,0) - Battery indicators
     ledStripStatusModeConfigMutable()->ledConfigs[0] = DEFINE_LED(0, 0, 0, 0, LED_FUNCTION_BATTERY, 0, 0);
     ledStripStatusModeConfigMutable()->ledConfigs[1] = DEFINE_LED(15, 0, 0, 0, LED_FUNCTION_BATTERY, 0, 0);
 
