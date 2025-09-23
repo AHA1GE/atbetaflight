@@ -63,6 +63,8 @@
 #include "sensors/boardalignment.h"
 #include "sensors/compass.h"
 #include "sensors/gyro.h"
+#include "pg/pinio.h"
+#include "pg/piniobox.h"
 
 #ifdef BRUSHED_MOTORS_PWM_RATE
 #undef BRUSHED_MOTORS_PWM_RATE
@@ -86,18 +88,6 @@ void targetConfiguration(void)
         motorConfigMutable()->dev.motorPwmRate = BRUSHED_MOTORS_PWM_RATE;
         motorConfigMutable()->minthrottle = 1040; // for 6mm and 7mm brushed
     }
-
-    // Set AUX1 low = ARM as default
-    modeActivationConditionsMutable(0)->modeId = BOXARM;
-    modeActivationConditionsMutable(0)->auxChannelIndex = AUX1 - NON_AUX_CHANNEL_COUNT;
-    modeActivationConditionsMutable(0)->range.startStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MIN);
-    modeActivationConditionsMutable(0)->range.endStep = CHANNEL_VALUE_TO_STEP(1300);
-    // Set AUX1 full range = Angle as default
-    modeActivationConditionsMutable(1)->modeId = BOXANGLE;
-    modeActivationConditionsMutable(1)->auxChannelIndex = AUX1 - NON_AUX_CHANNEL_COUNT;
-    modeActivationConditionsMutable(1)->range.startStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MIN);
-    modeActivationConditionsMutable(1)->range.endStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MAX);
-    analyzeModeActivationConditions();
 
     // Master Configuration from preset
     // Gyro filter settings from preset
@@ -243,11 +233,15 @@ void targetConfiguration(void)
     ledStripStatusModeConfigMutable()->ledConfigs[3] = DEFINE_LED(0, 0, 0, 0, LED_FUNCTION_BATTERY, 0, 0);
     ledStripStatusModeConfigMutable()->ledConfigs[2] = DEFINE_LED(15, 0, 0, 0, LED_FUNCTION_BATTERY, 0, 0);
 
-    // Back LEDs (0,15 and 15,15) - Blue color indicators
-    ledStripStatusModeConfigMutable()->ledConfigs[0] = DEFINE_LED(0, 15, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
-    ledStripStatusModeConfigMutable()->ledConfigs[1] = DEFINE_LED(15, 15, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
+    // Back LEDs (0,15 and 15,15) - DEEP_PINK color indicators
+    // ledStripStatusModeConfigMutable()->ledConfigs[0] = DEFINE_LED(0, 15, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
+    // ledStripStatusModeConfigMutable()->ledConfigs[1] = DEFINE_LED(15, 15, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
+    
+    // Back LEDs (0,15 and 15,15) - Battery indicators
+    ledStripStatusModeConfigMutable()->ledConfigs[0] = DEFINE_LED(0, 15, 0,0,LED_FUNCTION_BATTERY, 0, 0);
+    ledStripStatusModeConfigMutable()->ledConfigs[1] = DEFINE_LED(15, 15, 0,0,LED_FUNCTION_BATTERY, 0, 0);
 
-    // LED strip - Blue color (center positions)
+    // LED strip - DEEP_PINK color (center positions)
     ledStripStatusModeConfigMutable()->ledConfigs[4] = DEFINE_LED(8, 15, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
     ledStripStatusModeConfigMutable()->ledConfigs[5] = DEFINE_LED(8, 14, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
     ledStripStatusModeConfigMutable()->ledConfigs[6] = DEFINE_LED(8, 13, COLOR_DEEP_PINK, 0, LED_FUNCTION_COLOR, 0, 0);
@@ -257,14 +251,43 @@ void targetConfiguration(void)
     reevaluateLedConfig();
 #endif
 
-    // // AUX4 (index 3) adjustment range from preset: adjrange 0 0 0 900 1300 30 3 0 0
-    adjustmentRange_t *adjRange = adjustmentRangesMutable(0);
-    adjRange->auxChannelIndex = 1; // range channel (not used here)
-    adjRange->range.startStep = CHANNEL_VALUE_TO_STEP(900);
-    adjRange->range.endStep = CHANNEL_VALUE_TO_STEP(910);          // Updated to match preset
-    adjRange->adjustmentConfig = 30;                                // LED profile adjustment function index (ADJUSTMENT_LED_PROFILE + offset)
-    adjRange->auxSwitchChannelIndex = AUX4 - NON_AUX_CHANNEL_COUNT; // AUX4 = 3 in array (0-based)
-    adjRange->adjustmentCenter = 0;
-    adjRange->adjustmentScale = 0;
+    // // AUX4 adjustment range from preset: adjrange 0 0 0 900 1300 30 3 0 0
+    adjustmentRangesMutable(0)->auxChannelIndex = 0; // range channel (not used here)
+    adjustmentRangesMutable(0)->range.startStep = CHANNEL_VALUE_TO_STEP(900);
+    adjustmentRangesMutable(0)->range.endStep = CHANNEL_VALUE_TO_STEP(910);
+    adjustmentRangesMutable(0)->adjustmentConfig = 30;                                // LED profile adjustment function index (ADJUSTMENT_LED_PROFILE + offset)
+    adjustmentRangesMutable(0)->auxSwitchChannelIndex = AUX4 - NON_AUX_CHANNEL_COUNT; // AUX4 = 3 in array (0-based)
+    adjustmentRangesMutable(0)->adjustmentCenter = 0;
+    adjustmentRangesMutable(0)->adjustmentScale = 0;
+
+
+    // PinIO configuration
+    pinioConfigMutable()->config[0] = PINIO_CONFIG_OUT_INVERTED | PINIO_CONFIG_MODE_OUT_PP;
+    pinioConfigMutable()->config[1] = PINIO_CONFIG_OUT_INVERTED | PINIO_CONFIG_MODE_OUT_PP;
+    pinioBoxConfigMutable()->permanentId[0] = 40;
+    pinioBoxConfigMutable()->permanentId[1] = 41;
+
+    // Default mode: AUX1 = ARM, AUX4 = Angle(full Range), AUX5 = USER1, AUX6 = USER2
+    // Set AUX1 low = ARM as default
+    modeActivationConditionsMutable(0)->modeId = BOXARM;
+    modeActivationConditionsMutable(0)->auxChannelIndex = AUX1 - NON_AUX_CHANNEL_COUNT;
+    modeActivationConditionsMutable(0)->range.startStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MIN);
+    modeActivationConditionsMutable(0)->range.endStep = CHANNEL_VALUE_TO_STEP(1300);
+    // Set AUX4 full range = Angle as default
+    modeActivationConditionsMutable(1)->modeId = BOXANGLE;
+    modeActivationConditionsMutable(1)->auxChannelIndex = AUX4 - NON_AUX_CHANNEL_COUNT;
+    modeActivationConditionsMutable(1)->range.startStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MIN);
+    modeActivationConditionsMutable(1)->range.endStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MAX);
+    // Set AUX5 high = USER1 as default
+    modeActivationConditionsMutable(2)->modeId = BOXUSER1;
+    modeActivationConditionsMutable(2)->auxChannelIndex = AUX5 - NON_AUX_CHANNEL_COUNT;
+    modeActivationConditionsMutable(2)->range.startStep = CHANNEL_VALUE_TO_STEP(1700);
+    modeActivationConditionsMutable(2)->range.endStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MAX);
+    // Set AUX6 high = USER2 as default
+    modeActivationConditionsMutable(3)->modeId = BOXUSER2;
+    modeActivationConditionsMutable(3)->auxChannelIndex = AUX6 - NON_AUX_CHANNEL_COUNT;
+    modeActivationConditionsMutable(3)->range.startStep = CHANNEL_VALUE_TO_STEP(1700);
+    modeActivationConditionsMutable(3)->range.endStep = CHANNEL_VALUE_TO_STEP(CHANNEL_RANGE_MAX);
+    analyzeModeActivationConditions();
 }
 #endif

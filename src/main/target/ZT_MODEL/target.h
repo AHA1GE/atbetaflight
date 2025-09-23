@@ -148,9 +148,10 @@
 #define UART1_RX_PIN            PA10
 #define UART1_TX_PIN            PA9
 
-#define USE_UART2
-#define UART2_RX_PIN            PA3
-#define UART2_TX_PIN            PA2
+// #define USE_UART2
+// #define UART2_RX_PIN            PA3
+// #define UART2_TX_PIN            PA2
+// PA2 PA3 will be Pinio, so disable UART2
 
 #define USE_UART3
 #define UART3_RX_PIN            PB10
@@ -164,8 +165,6 @@
 #define UART7_RX_PIN            PB3
 #define UART7_TX_PIN            PB4
 
-
-
 #define USE_SOFTSERIAL1
 #define USE_SOFTSERIAL2
 
@@ -175,7 +174,12 @@
 #define SERIALRX_PROVIDER       SERIALRX_SBUS
 #define SERIALRX_UART           SERIAL_PORT_USART3
 
-
+// *************** PINIO *****************************
+#define USE_PINIO1
+#define PINIO1_PIN              PA2
+#define USE_PINIO2
+#define PINIO2_PIN              PA3
+#define USE_PINIOBOX
 
 // *************** ADC *****************************
 #define USE_ADC
@@ -191,7 +195,7 @@
 #define USE_LED_STRIP
 #define USE_LED_STRIP_STATUS_MODE
 
-#define DEFAULT_FEATURES                (FEATURE_OSD | FEATURE_TELEMETRY | FEATURE_LED_STRIP | FEATURE_INFLIGHT_ACC_CAL)
+#define DEFAULT_FEATURES                (FEATURE_OSD | FEATURE_TELEMETRY | FEATURE_LED_STRIP | FEATURE_INFLIGHT_ACC_CAL )
 #define DEFAULT_VOLTAGE_METER_SOURCE    VOLTAGE_METER_ADC
 #define DEFAULT_CURRENT_METER_SOURCE    CURRENT_METER_NONE
 
