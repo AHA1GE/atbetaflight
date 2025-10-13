@@ -137,12 +137,12 @@ void targetConfiguration(void)
     pidProfile->iterm_relax_cutoff = 7;
 
     // PID values from preset
-    pidProfile->pid[PID_PITCH].P = 115; // p_pitch
+    pidProfile->pid[PID_PITCH].P = 110; // p_pitch
     pidProfile->pid[PID_PITCH].I = 90;  // i_pitch
     pidProfile->pid[PID_PITCH].D = 88;  // calculated based on dterm settings
     pidProfile->pid[PID_PITCH].F = 100; // f_pitch
 
-    pidProfile->pid[PID_ROLL].P = 110; // p_roll
+    pidProfile->pid[PID_ROLL].P = 100; // p_roll
     pidProfile->pid[PID_ROLL].I = 80;  // i_roll
     pidProfile->pid[PID_ROLL].D = 77;  // calculated based on dterm settings
     pidProfile->pid[PID_ROLL].F = 90;  // f_roll
@@ -158,8 +158,8 @@ void targetConfiguration(void)
 
 #ifdef USE_D_MIN
     // D_min values
-    pidProfile->d_min[FD_ROLL] = 55;
-    pidProfile->d_min[FD_PITCH] = 60;
+    pidProfile->d_min[FD_ROLL] = 50;
+    pidProfile->d_min[FD_PITCH] = 55;
     pidProfile->d_min[FD_YAW] = 30; // typically 0 for yaw
     pidProfile->d_min_advance = 25; // d_max_advance
 #endif
@@ -183,9 +183,9 @@ void targetConfiguration(void)
     controlRateConfig_t *controlRateConfig = controlRateProfilesMutable(0);
 
     // Rate settings from preset (rateprofile 0)
-    controlRateConfig->rcRates[FD_ROLL] = 4;  // roll_rc_rate
-    controlRateConfig->rcRates[FD_PITCH] = 4; // pitch_rc_rate
-    controlRateConfig->rcRates[FD_YAW] = 4;   // yaw_rc_rate
+    controlRateConfig->rcRates[FD_ROLL] = 3;  // roll_rc_rate
+    controlRateConfig->rcRates[FD_PITCH] = 3; // pitch_rc_rate
+    controlRateConfig->rcRates[FD_YAW] = 3;   // yaw_rc_rate
     controlRateConfig->rates[FD_ROLL] = 65;   // roll_srate
     controlRateConfig->rates[FD_PITCH] = 66;  // pitch_srate
 
